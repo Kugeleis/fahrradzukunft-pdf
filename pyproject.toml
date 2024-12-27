@@ -8,6 +8,7 @@ dependencies = [
     "beautifulsoup4>=4.12.3",
     "pandas>=2.2.3",
     "pdfkit>=1.0.0",
+    "pypdf2>=3.0.1",
     "requests>=2.32.3",
     "weasyprint>=63.1",
     "xhtml2pdf>=0.2.16",
