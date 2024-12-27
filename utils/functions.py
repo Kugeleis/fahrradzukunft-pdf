@@ -4,6 +4,7 @@ import requests
 from weasyprint import HTML, CSS
 from urllib.parse import urljoin, urlparse
 import yaml
+from PyPDF2 import PdfMerger
 
 
 def collect_links(start_url):
@@ -62,6 +63,7 @@ def save_links_to_yaml(links: list[str], file_path: Path):
     with open(file_path, "w") as file:
         yaml.dump(data, file)
 
+
 def get_page_text(url) -> str:
     """get the text content of the webpage"""
     response = requests.get(url)
@@ -74,7 +76,7 @@ def get_page_text(url) -> str:
 
 def create_file_name(url: str) -> str:
     """create a file name from the URL"""
-    parts = url.rstrip('/').split('/')
+    parts = url.rstrip("/").split("/")
     return parts[-1] + ".pdf"
 
 
@@ -93,9 +95,30 @@ def make_pdf(url: str, data_dir: Path, css) -> None:
         zoom=0.8,
     )
 
+
 def create_foo_bar_string(url: str) -> str:
     """Extract the domain name and the first sub-path from a URL and format it as a foo_bar string."""
     parsed_url = urlparse(url)
-    domain = parsed_url.netloc.split('.')[-2]
-    first_sub_path = parsed_url.path.strip('/').split('/')[0]
+    domain = parsed_url.netloc.split(".")[-2]
+    first_sub_path = parsed_url.path.strip("/").split("/")[0]
     return f"{domain}_{first_sub_path}"
+
+
+def get_files(folder_path: Path, file_extension=".pdf") -> list[Path]:
+    """Get a list of all files in the specified folder. File type defaluts to PDF."""
+    return [file for file in folder_path.iterdir() if file.suffix == file_extension]
+
+
+def concatenate_pdfs(pdf_files: list[Path], output_path: Path) -> None:
+    """Concatenate all PDF files into a single PDF."""
+    merger = PdfMerger()
+    for pdf_file in pdf_files:
+        merger.append(str(pdf_file))
+    merger.write(str(output_path))
+    merger.close()
+
+
+def append_pdf(input: PdfMerger, new_pdf: Path) -> PdfMerger:
+    """Append a new PDF to the existing PDF."""
+    input.append(str(new_pdf))
+    return input
