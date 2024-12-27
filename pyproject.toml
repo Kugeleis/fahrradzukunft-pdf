@@ -15,4 +15,6 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ipykernel>=6.29.5",
+    "nb-clean>=4.0.1",
+    "ruff>=0.8.4",
 ]
